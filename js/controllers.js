@@ -10,8 +10,9 @@ angular.module('raw.controllers', [])
       { title : 'Cars (multivariate)', url : 'data/multivariate.csv' },
       { title : 'Movies (dispersions)', url : 'data/dispersions.csv' },
       { title : 'Music (flows)', url : 'data/flows.csv' },
-      { title : 'Cocktails (correlations)', url : 'data/correlations.csv' }
-    ]
+      { title : 'Cocktails (correlations)', url : 'data/correlations.csv' },
+      { title : 'Shopping List (JSON)', url : 'data/json/wintershopping.json' }
+    ];
 
     $scope.$watch('sample', function (sample){
       if (!sample) return;
@@ -47,6 +48,7 @@ angular.module('raw.controllers', [])
         var parser = raw.parser();
         $scope.data = parser(text);
         $scope.metadata = parser.metadata(text);
+        console.log('metadata', $scope.metadata);
         $scope.error = false;
       } catch(e){
         $scope.data = [];
@@ -59,9 +61,24 @@ angular.module('raw.controllers', [])
 
     $scope.delayParse = dataService.debounce($scope.parse, 500, false);
 
-    $scope.$watch("text", function (text){
-      $scope.loading = true;
-      $scope.delayParse(text);
+    $scope.loading = true;
+    function parseJsonText(text) {
+      const parsed = JSON.parse(text);
+      $scope.data = parsed;
+      $scope.metadata = dataService.getMetaDataFromJson(parsed);
+      $scope.loading = false;
+      console.log('metadata', $scope.metadata);
+    }
+
+    $scope.$watch("text", function (text) {
+      if (text && text.length > 0
+          && (text[0] === "[" || text[0] === "{")) {
+        console.log("Found Array/JSON, no parsing needed");
+        parseJsonText(text);
+      } else {
+        console.log("Parse CSV to JSON");
+        $scope.delayParse(text);
+      }
     });
 
     $scope.charts = raw.charts.values().sort(function (a,b){ return a.title() < b.title() ? -1 : a.title() > b.title() ? 1 : 0; });
