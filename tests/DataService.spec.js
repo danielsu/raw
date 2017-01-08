@@ -27,7 +27,7 @@ describe('data service', function () {
         expect(result.length).toBe(0);
     });
 
-    it('should return empty array for empty input', function () {
+    it('should return extract metadata from input with nested array (1 level nested)', function () {
         var input = [
             {
                 "purchaseDate": 1478931416146,
@@ -71,7 +71,6 @@ describe('data service', function () {
             {key: "purchaseDate", type: Number.name},//Date or Number
             {key: "zipCode", type: String.name},
             {key: "city", type: String.name},
-            {key: "articles", type: Array.name},
             {key: "articles.name", type: String.name},
             {key: "articles.pricePerPiece", type: Number.name},
             {key: "articles.category", type: String.name},
@@ -80,7 +79,6 @@ describe('data service', function () {
 
         var result = dataService.getMetaDataFromJson(input);
         var resultString = JSON.stringify(result);
-        console.log(resultString);
 
         expect(result).not.toBeNull();
         expect(result.constructor.name).toBe(Array.name);
