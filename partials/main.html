@@ -10,7 +10,8 @@
 				ng-model="sample"
 				placeholder="or choose one of our samples"
 				ng-options="s as s.title for s in samples" bs-select>
-			</button>
+			</button><br/>
+			<label style="font-size: 80%">(optional) URL for JSON data </label><input type="text" ng-model="jsonUrl">
 
 			<span class="list-type pull-right">
 				<i class="type fa fa-align-left breath-left"
@@ -58,7 +59,7 @@
 				<div>
 
 					<h3 id="layout">
-						Choose a Chart	
+						Choose a Chart
 					</h3>
 
 
@@ -71,7 +72,7 @@
 								<p class="light" ng-bind-html="chart.description()"></p>
 								<p class="light" data-ng-show="!chart.description()">No description given</p>
 							</div>
-						</div>		
+						</div>
 
 						<div class="col-lg-9 col-md-9">
 
@@ -87,7 +88,7 @@
 											</p>
 										</div>
 									</div>
-									
+
 								<div class="col-lg-4 col-md-4" ng-show="category=='Others'">
 									<a href="https://github.com/densitydesign/raw/wiki/Adding-New-Charts">
 										<div class="layout yours">
@@ -105,7 +106,7 @@
 
 							</div>
 
-							
+
 
 						</div>
 
@@ -195,7 +196,7 @@
 									types="dimension.types()"
 									class="dimensions-container list-unstyled">
 								</ul>
-							
+
 						</div>
 
 						<!--<div class="text-muted small" ng-show="dimension.required() && dimension.required() - dimension.value.length > 0">
@@ -251,7 +252,7 @@
 							</div>
 
 							<div colors="option.value" ng-switch-when="color"></div>
-							
+
 							<button
 							type="button"
 							class="btn btn-default"
@@ -307,7 +308,7 @@
 				</div>
 
 			</div>
-		</div>	
+		</div>
 
 	</div>
 </section>

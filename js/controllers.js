@@ -14,17 +14,39 @@ angular.module('raw.controllers', [])
       { title : 'Shopping List (JSON)', url : 'data/json/wintershopping.json' }
     ];
 
-    $scope.$watch('sample', function (sample){
-      if (!sample) return;
-      dataService.loadSample(sample.url).then(
-        function(data){
-          $scope.text = data;
-        }, 
-        function(error){
-          $scope.error = error;
+      $scope.$watch('sample', function (sample) {
+        if (!sample) return;
+        if (sample.url.endsWith(".json")) {
+          //loadJsonData(sample.url);
+          $scope.jsonUrl = sample.url;
+        }else{
+          dataService.loadSample(sample.url).then(
+              function (data) {
+                $scope.text = data;
+              },
+              function (error) {
+                $scope.error = error;
+              }
+          );
         }
-      );
-    });
+      });
+
+      $scope.$watch('jsonUrl', function (url) {
+        if (!url) return;
+        loadJsonData(url);
+      });
+
+      function loadJsonData(url) {
+        dataService.loadExternalData(url).then(
+            function (data) {
+              parseJsonText(data);
+            },
+            function (error) {
+              $scope.error = error;
+            }
+        );
+      }
+
 
     // init
     $scope.raw = raw;
@@ -62,15 +84,15 @@ angular.module('raw.controllers', [])
     $scope.delayParse = dataService.debounce($scope.parse, 500, false);
 
     $scope.loading = true;
-    function parseJsonText(text) {
-      const parsed = JSON.parse(text);
+    function parseJsonText(obj) {
+      const parsed = angular.isString(obj) ? JSON.parse(obj) : obj;
       $scope.data = parsed;
       $scope.metadata = dataService.getMetaDataFromJson(parsed);
       $scope.loading = false;
       console.log('metadata', $scope.metadata);
     }
 
-    $scope.$watch("text", function (text) {
+    $scope.$watch('text', function (text) {
       if (text && text.length > 0
           && (text[0] === "[" || text[0] === "{")) {
         console.log("Found Array/JSON, no parsing needed");

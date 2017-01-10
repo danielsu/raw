@@ -91,6 +91,24 @@ angular.module('raw.services', [])
             },
 
             /**
+             * Get data via Proxy Server to circumvent Same Origin Policy / CORS of external servers.
+             * @param url
+             */
+            loadExternalData: function (url) {
+                var deferred = $q.defer();
+                const PROXY_SERVER = "http://0.0.0.0:8180/?proxy=";
+                $http.get(PROXY_SERVER + url)
+                    .then(function (response) {
+                        deferred.resolve(response.data);
+                    },
+                    function () {
+                        deferred.reject("An error occured while getting url (" + url + ")");
+                    });
+
+                return deferred.promise;
+            },
+
+            /**
              *
              * @param json required
              * @param prefix optional, used for nested calls
