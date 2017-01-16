@@ -21,7 +21,7 @@ module.exports = function(config) {
             //"partials/*.*",
             //"templates/*.*",
 
-            "tests/*.*"
+            "tests/*.js"
         ],
         autoWatch: true,
         autoWatchBatchDelay: 250 //default

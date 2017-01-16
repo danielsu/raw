@@ -167,6 +167,85 @@ angular.module('raw.services', [])
                     });
                 });
                 return resultStorage;
+            },
+
+            /**
+             * Combines a result set with given properties from multiple data sets (tables, ORM)
+             * @get selected param inputORMData
+             * @param selectedProperties
+             * @return {Array}
+             */
+            getItemsWithSelectedProperties: function (inputORMData, selectedProperties) {
+                var result = [];
+
+                if (!inputORMData || inputORMData.length === 0) {
+                    console.error('no inputORMData data given');
+                    return [];
+                }
+
+                // check for nested properties / arrays
+                // e.g. "articles.pricePerPiece", "articles.category"
+                var nestedPropList = selectedProperties.filter(function (propertyName) {
+                    return propertyName.contains(".")
+                });
+
+                // extract number of arrays
+                // e.g. articles.pricePerPiece --> 'articles'
+                var singleArrayName = "";
+                var hasError = false;
+                nestedPropList.forEach(function (name) {
+                    // get first part
+                    var firstPart = name.split('.')[0];
+
+                    if (singleArrayName === firstPart || singleArrayName.length === 0) {
+                        singleArrayName = firstPart;
+                    } else {
+                        console.error('Can not handle sets with multiple arrays. Already use:', singleArrayName, 'ignore array:', firstPart);
+                        // cannot break forEach... handle outside
+                        hasError = true;
+                    }
+                });
+
+                if (hasError) {
+                    return [];
+                }
+
+                if (nestedPropList.length === 0) {
+                    // handle case, when only outer data is selected
+                    //iterate over top level
+                    inputORMData.TopLevel.forEach(function (item) {
+                        var newEntry = {};
+                        selectedProperties.forEach(function (propName) {
+                            newEntry[propName] = item[propName]
+                        });
+                        result.push(newEntry);
+                    });
+
+                } else {
+                    // iterate over nested array and fill with surrounding parent data
+                    inputORMData[singleArrayName].forEach(function (innerItem) {
+                        var newEntry = {};
+                        // get all selected array values
+                        // e.g. "articles.pricePerPiece", "articles.category"
+                        selectedProperties.forEach(function (propName) {
+                            if (propName.startsWith(singleArrayName + ".")) {
+                                newEntry[propName] = innerItem[propName.split('.')[1]];
+                            } else if (!propName.contains('.')) {
+                                // parent data: e.g. "zipCode": "80331", "city": "München"
+                                innerItem.refIndex;
+
+                                // TODO performance killer ? due to look up for each property
+                                var parent = inputORMData[innerItem.refName][innerItem.refIndex];
+                                newEntry[propName] = parent[propName];
+                            } else {
+                                console.error('Skip property of multiple array:', propName);
+                            }
+                        });
+                        result.push(newEntry);
+                    });
+                }
+
+                return result;
             }
         }
     });

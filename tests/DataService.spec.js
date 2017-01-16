@@ -194,8 +194,6 @@ describe('data service', function () {
 
         var result = dataService.transformNestedDataToORM(input);
 
-        console.debug("result:", result);
-
         expect(result).toBeDefined();
         expect(result.TopLevel).toBeDefined();
         expect(result.articles).toBeDefined();
@@ -208,7 +206,6 @@ describe('data service', function () {
             expect(result.TopLevel[index].totalCost).toBe(expectedListEntry.totalCost);
 
         });
-
 
         // check to be equal and contain 'refName' and 'refIndex'
         expectedORM.articles.forEach(function (expectedObject, index) {
@@ -229,4 +226,255 @@ describe('data service', function () {
             expect(resultString).not.toContain('"refName": "unknownProb"');
         });
     });
+
+    it("should error when called with multiple (!) nested arrays", function () {
+        spyOn(console, "error");
+
+        var selectedPropertiesWithMultipleDifferentNesting = [
+            "purchaseDate",
+            "oneArray.name", "oneArray.pricePerPiece",
+            "anotherArray.category", "anotherArray.amount"
+        ];
+
+        var result = dataService.getItemsWithSelectedProperties([], selectedPropertiesWithMultipleDifferentNesting);
+
+        expect(console.error).toHaveBeenCalled();
+    });
+
+    it("should error when called with single (!) nested array, but no data", function () {
+        spyOn(console, "error");
+
+        var selectedPropertiesWithMultipleDifferentNesting = [
+            "purchaseDate",
+            "oneArray.name",
+            "oneArray.pricePerPiece"
+        ];
+
+        var result = dataService.getItemsWithSelectedProperties([], selectedPropertiesWithMultipleDifferentNesting);
+
+        expect(console.error).toHaveBeenCalledWith("no inputORMData data given");
+    });
+
+    //it("should warn when entry is not contained in data", function () {
+    //    spyOn(console, "warn");
+    //
+    //    var input={
+    //        "TopLevel": []
+    //    };
+    //
+    //    var unknownSelectedProperties = [
+    //        "purchaseDate",
+    //        "oneArray.name"
+    //    ];
+    //
+    //    dataService.getItemsWithSelectedProperties(input, unknownSelectedProperties);
+    //
+    //    expect(console.warn).toHaveBeenCalled();
+    //});
+
+    it("should transform nested array to 2D datasets", function () {
+        var input2DData = {
+            "TopLevel": [
+                {
+                    "purchaseDate": 1478931416146,
+                    "zipCode": "80331",
+                    "city": "München",
+                    "totalCost": 210
+                },
+                {
+                    "purchaseDate": 1478879356383,
+                    "zipCode": "60306",
+                    "city": "Frankfurt",
+                    "totalCost": 142
+                }
+            ],
+            "articles": [
+                {
+                    "refName": "TopLevel",
+                    "refIndex": 0,
+                    "name": "Wintermantel",
+                    "pricePerPiece": 120,
+                    "category": "Oberbekleidung",
+                    "amount": 1
+                }, {
+                    "refName": "TopLevel",
+                    "refIndex": 0,
+                    "name": "Gutscheinkarte",
+                    "pricePerPiece": 40,
+                    "category": "Gutscheine",
+                    "amount": 1
+                }, {
+                    "refName": "TopLevel",
+                    "refIndex": 0,
+                    "name": "Gutscheinkarte",
+                    "pricePerPiece": 50,
+                    "category": "Gutscheine",
+                    "amount": 1
+                },
+                {
+                    "refName": "TopLevel",
+                    "refIndex": 1,
+                    "name": "Pullover",
+                    "pricePerPiece": 39,
+                    "category": "Hemden",
+                    "amount": 3
+                },
+                {
+                    "refName": "TopLevel",
+                    "refIndex": 1,
+                    "name": "Polohemd",
+                    "pricePerPiece": 25,
+                    "category": "Hemden",
+                    "amount": 1
+                }
+            ]
+        };
+
+        var selectedProperties = [
+            "purchaseDate", "zipCode", "city",
+            "articles.name", "articles.pricePerPiece", "articles.category", "articles.amount"
+        ];
+        var expectedList = [
+            {
+                "purchaseDate": 1478931416146,
+                "zipCode": "80331",
+                "city": "München",
+                "articles.name": "Wintermantel",
+                "articles.pricePerPiece": 120,
+                "articles.category": "Oberbekleidung",
+                "articles.amount": 1
+            },
+            {
+                "purchaseDate": 1478931416146,
+                "zipCode": "80331",
+                "city": "München",
+                "articles.name": "Gutscheinkarte",
+                "articles.pricePerPiece": 40,
+                "articles.category": "Gutscheine",
+                "articles.amount": 1
+            },
+            {
+                "purchaseDate": 1478931416146,
+                "zipCode": "80331",
+                "city": "München",
+                "articles.name": "Gutscheinkarte",
+                "articles.pricePerPiece": 50,
+                "articles.category": "Gutscheine",
+                "articles.amount": 1
+            }
+        ];
+
+        var result = dataService.getItemsWithSelectedProperties(input2DData, selectedProperties);
+        expect(result.length).not.toBe(0);
+
+        var resultString = JSON.stringify(result);
+        var propertyNames = Object.getOwnPropertyNames(expectedList[0]);
+
+        expectedList.forEach(function (item) {
+            propertyNames.forEach(function (proName) {
+
+                if (angular.isNumber(item[proName])) {
+                    expect(resultString).toContain('"' + proName + '":' + item[proName]);
+                } else {
+                    expect(resultString).toContain('"' + proName + '":"' + item[proName] + '"');
+                }
+
+            });
+        });
+    });
+
+    it("should transform nested array to 2D datasets, with only toplevel attributes selected", function () {
+        var input2DData = {
+            "TopLevel": [
+                {
+                    "purchaseDate": 1478931416146,
+                    "zipCode": "80331",
+                    "city": "München",
+                    "totalCost": 210
+                },
+                {
+                    "purchaseDate": 1478879356383,
+                    "zipCode": "60306",
+                    "city": "Frankfurt",
+                    "totalCost": 142
+                }
+            ],
+            "articles": [
+                {
+                    "refName": "TopLevel",
+                    "refIndex": 0,
+                    "name": "Wintermantel",
+                    "pricePerPiece": 120,
+                    "category": "Oberbekleidung",
+                    "amount": 1
+                }, {
+                    "refName": "TopLevel",
+                    "refIndex": 0,
+                    "name": "Gutscheinkarte",
+                    "pricePerPiece": 40,
+                    "category": "Gutscheine",
+                    "amount": 1
+                }, {
+                    "refName": "TopLevel",
+                    "refIndex": 0,
+                    "name": "Gutscheinkarte",
+                    "pricePerPiece": 50,
+                    "category": "Gutscheine",
+                    "amount": 1
+                },
+                {
+                    "refName": "TopLevel",
+                    "refIndex": 1,
+                    "name": "Pullover",
+                    "pricePerPiece": 39,
+                    "category": "Hemden",
+                    "amount": 3
+                },
+                {
+                    "refName": "TopLevel",
+                    "refIndex": 1,
+                    "name": "Polohemd",
+                    "pricePerPiece": 25,
+                    "category": "Hemden",
+                    "amount": 1
+                }
+            ]
+        };
+
+        var selectedTopLevelProperties = [
+            "purchaseDate", "zipCode", "city"
+        ];
+        var expectedList = [
+            {
+                "purchaseDate": 1478931416146,
+                "zipCode": "80331",
+                "city": "München"
+            },
+            {
+                "purchaseDate": 1478879356383,
+                "zipCode": "60306",
+                "city": "Frankfurt"
+            }
+
+        ];
+
+        var result = dataService.getItemsWithSelectedProperties(input2DData, selectedTopLevelProperties);
+        expect(result.length).not.toBe(0);
+
+        var resultString = JSON.stringify(result);
+        var propertyNames = Object.getOwnPropertyNames(expectedList[0]);
+
+        expectedList.forEach(function (item) {
+            propertyNames.forEach(function (proName) {
+
+                if (angular.isNumber(item[proName])) {
+                    expect(resultString).toContain('"' + proName + '":' + item[proName]);
+                } else {
+                    expect(resultString).toContain('"' + proName + '":"' + item[proName] + '"');
+                }
+
+            });
+        });
+    })
+
 });

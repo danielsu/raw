@@ -15,6 +15,17 @@ if (!String.prototype.endsWith) {
     };
 }
 
+/*
+ * Polyfill for String.startsWith taken from
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
+ */
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position){
+        position = position || 0;
+        return this.substr(position, searchString.length) === searchString;
+    };
+}
+
 if (!String.prototype.contains) {
     String.prototype.contains = function (needle) {
         var subjectString = this.toString();
