@@ -17,6 +17,16 @@ angular.module('raw.services', [])
         }
 
         /**
+         * Flattens attribute names and their type.
+         * Concats nested attributes via '.'
+         * e.g. {"purchaseDate": 1478931416146, [ "articles": [ {"name": "Wintermantel",}]}
+         * will be returned as:
+         * [
+         *   {key: "purchaseDate", type: "Number"},
+         *   {key: "articles.name", type: "String"}
+         * ]
+         *
+         * Disclaimer: Only the first item of each array will be inspected.
          *
          * @param json required
          * @param prefix optional, used for nested calls
@@ -30,6 +40,7 @@ angular.module('raw.services', [])
             var resultList = [];
             var nestedResult;
 
+            // for now, only inspect first entry in array, assuming all have the same attributes
             var firstEntry = json[0];
             var propertyNames = Object.getOwnPropertyNames(firstEntry);
             propertyNames.forEach(function (propName) {
@@ -96,7 +107,7 @@ angular.module('raw.services', [])
              */
             loadExternalData: function (url) {
                 var deferred = $q.defer();
-                const PROXY_SERVER = "http://0.0.0.0:8180/?proxy=";
+                var PROXY_SERVER = "http://0.0.0.0:8180/?proxy=";
                 $http.get(PROXY_SERVER + url)
                     .then(function (response) {
                         deferred.resolve(response.data);
@@ -114,7 +125,48 @@ angular.module('raw.services', [])
              * @param prefix optional, used for nested calls
              * @return {Array} resulting metadata
              */
-            getMetaDataFromJson: getMetaDataFromJson
+            getMetaDataFromJson: getMetaDataFromJson,
 
+            /**
+             * Transform nested Data set to object relational mapping
+             * @param inputList
+             * @return {{TopLevel: Array}}
+             */
+            transformNestedDataToORM: function (inputList) {
+                var resultStorage = {
+                    TopLevel: []
+                };
+
+                //iterate inputList = top level
+                inputList.forEach(function (item, topLevelIndex) {
+                    if (!resultStorage.TopLevel[topLevelIndex]) {
+                        resultStorage.TopLevel.push({});
+                    }
+                    // add simple props and objects, but no arrays
+                    var itemPropertyNames = Object.getOwnPropertyNames(item); // indirect call needed
+
+                    itemPropertyNames.forEach(function (name) {
+                        if (angular.isArray(item[name])) {
+                            // handle array
+                            if (!resultStorage[name]) {
+                                resultStorage[name] = [];
+                            }
+
+                            var array = item[name];
+                            array.forEach(function (arrayItem) {
+                                // TODO is creating var in loop performance issue? otherwise, how to avoid reference to other objects
+                                var tempModifiedItem = angular.copy(arrayItem);
+                                tempModifiedItem.refIndex = topLevelIndex;
+                                tempModifiedItem.refName = "TopLevel";
+                                resultStorage[name].push(tempModifiedItem);
+                            })
+
+                        } else {
+                            resultStorage.TopLevel[topLevelIndex][name] = angular.copy(item[name]);
+                        }
+                    });
+                });
+                return resultStorage;
+            }
         }
     });

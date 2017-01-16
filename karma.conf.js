@@ -13,6 +13,7 @@ module.exports = function(config) {
             //"bower_components/**/*.js",
             "node_modules/angular-mocks/angular-mocks.js",
             "js/services.js",
+            "js/StringUtilPolyfill.js",
             //"js/*.*",
             //"lib/*.*",
             //"charts/*.*",

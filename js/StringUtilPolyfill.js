@@ -4,7 +4,7 @@
  * This method has been added to the ECMAScript 6 specification and may not be available in all JavaScript implementations yet. However, you can polyfill String.prototype.endsWith() with the following snippet:
  */
 if (!String.prototype.endsWith) {
-    String.prototype.endsWith = function(searchString, position) {
+    String.prototype.endsWith = function (searchString, position) {
         var subjectString = this.toString();
         if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
             position = subjectString.length;
@@ -12,5 +12,12 @@ if (!String.prototype.endsWith) {
         position -= searchString.length;
         var lastIndex = subjectString.lastIndexOf(searchString, position);
         return lastIndex !== -1 && lastIndex === position;
+    };
+}
+
+if (!String.prototype.contains) {
+    String.prototype.contains = function (needle) {
+        var subjectString = this.toString();
+        return subjectString.indexOf(needle) > -1;
     };
 }
