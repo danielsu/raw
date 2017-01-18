@@ -11,7 +11,7 @@ angular.module('raw.services', [])
         // raw just improves date check to only accept certain input
         function typeOfAngularStyle(value) {
             if (value === null || value.length === 0) return null;
-            if (angular.isDate(value)) return Date.name;
+            //if (angular.isDate(value)) return Date.name;
             if (angular.isNumber(value)) return Number.name;
             if (angular.isString(value)) return String.name;
             if (angular.isArray(value)) return Array.name;
@@ -49,7 +49,13 @@ angular.module('raw.services', [])
                 var valueOfProperty = firstEntry[propName];
                 var item = {};
                 item.key = keyPrefix + propName;
-                item.type = typeOfAngularStyle(valueOfProperty);
+
+                // todo: date hack to use unix time numbers
+                if(propName.match(/date|Date|time|Time/)){
+                    item.type = Date.name;
+                }else{
+                    item.type = typeOfAngularStyle(valueOfProperty);
+                }
 
                 if (item.type === Array.name) {
                     nestedResult = getMetaDataFromJson(valueOfProperty, item.key);

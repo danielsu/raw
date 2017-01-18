@@ -68,7 +68,7 @@ describe('data service', function () {
                 "totalCost": 360
             }];
         var expected = [
-            {key: "purchaseDate", type: Number.name},//Date or Number
+            {key: "purchaseDate", type: Date.name},//Date or Number
             {key: "zipCode", type: String.name},
             {key: "city", type: String.name},
             {key: "articles.name", type: String.name},
