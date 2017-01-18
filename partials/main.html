@@ -19,7 +19,7 @@
                         ng-model="sample"
                         placeholder="or choose one of our samples"
                         ng-options="s as s.title for s in samples" bs-select
-                        ng-click="datasource='sample'">
+                        ng-click="datasource='sample'; resetData();">
                 </button>
             </div>
 
@@ -36,7 +36,7 @@
                            ng-click="datasource='jsonUrl'"
                            ng-model="jsonUrl"
                            placeholder="URL to JSON data"
-                           ng-change="resetData()">
+                           ng-change="resetData(true)">
                     <button class="col-sm-1" ng-click="loadJsonData()" ng-disabled="!jsonUrl">Load</button>
 
                     <label class="col-sm-2">Select fields to use:</label>
@@ -58,10 +58,10 @@
                 </div>
                 <div class="col-sm-12 jsonWorkflowIndicator">
                     <!-- url -->
-                    <div class="col-sm-3" ng-class="{inProgress: datasource=='jsonUrl', done: jsonUrl}"></div>
+                    <div class="col-sm-3" ng-class="{inProgress: datasource=='jsonUrl', done: jsonUrl.length}"></div>
                     <!-- load -->
                     <div class="col-sm-1"
-                         ng-class="{ inProgress: jsonUrl, done: JSON_WORKFLOW_STAGES.DATA_FROM_URL_LOADED}"></div>
+                         ng-class="{ inProgress: jsonUrl.length, done: JSON_WORKFLOW_STAGES.DATA_FROM_URL_LOADED}"></div>
                     <!-- select fields -->
                     <div class="col-sm-6 "
                          ng-class="{ inProgress: JSON_WORKFLOW_STAGES.DATA_FROM_URL_LOADED, done: jsonSelectedMetadata.length}"></div>

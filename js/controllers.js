@@ -30,27 +30,30 @@ angular.module('raw.controllers', [])
             }
         });
 
-        $scope.JSON_WORKFLOW_STAGES = {
-            "DATA_FROM_URL_LOADED": false,
-            "METADATA_EXTRACTED": false,
-            "CONVERTED_3D_TO_2D": false,
-            "DATA_PREPARED": false
-        };
-
-
         // init
         $scope.raw = raw;
-        function initData(){
-            $scope.datasource = "table";
+        $scope.datasource = "table";
+        function initData(keepUrl){
             $scope.data = [];
             $scope.metadata = [];
-            $scope.jsonAvailableMetadata = [];
-            $scope.jsonSelectedMetadata = [];
             $scope.error = false;
             $scope.loading = false;
             $scope.text = "";
+
+            $scope.jsonAvailableMetadata = [];
+            $scope.jsonSelectedMetadata = [];
+            $scope.JSON_WORKFLOW_STAGES = {
+                "DATA_FROM_URL_LOADED": false,
+                "METADATA_EXTRACTED": false,
+                "CONVERTED_3D_TO_2D": false,
+                "DATA_PREPARED": false
+            };
+            if(!keepUrl){
+                $scope.jsonUrl = null;
+            }
         }
         initData();
+        $scope.resetData = initData;
 
         $scope.categories = ['Correlations', 'Distributions', 'Time Series', 'Hierarchies', 'Others'];
 
@@ -144,10 +147,6 @@ angular.module('raw.controllers', [])
                 $scope.delayParse(text);
             }
         });
-
-        $scope.resetData = function () {
-            initData();
-        };
 
         $scope.charts = raw.charts.values().sort(function (a, b) {
             return a.title() < b.title() ? -1 : a.title() > b.title() ? 1 : 0;
