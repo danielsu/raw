@@ -10,8 +10,7 @@ angular.module('raw.controllers', [])
             {title: 'Cars (multivariate)', url: 'data/multivariate.csv'},
             {title: 'Movies (dispersions)', url: 'data/dispersions.csv'},
             {title: 'Music (flows)', url: 'data/flows.csv'},
-            {title: 'Cocktails (correlations)', url: 'data/correlations.csv'},
-            {title: 'Shopping List (JSON)', url: 'data/json/wintershopping.json'}
+            {title: 'Cocktails (correlations)', url: 'data/correlations.csv'}
         ];
 
         $scope.$watch('sample', function (sample) {
@@ -35,18 +34,23 @@ angular.module('raw.controllers', [])
             "DATA_FROM_URL_LOADED": false,
             "METADATA_EXTRACTED": false,
             "CONVERTED_3D_TO_2D": false,
-            "DATA_FETCHED": false
+            "DATA_PREPARED": false
         };
 
 
         // init
         $scope.raw = raw;
-        $scope.data = [];
-        $scope.metadata = [];
-        $scope.jsonAvailableMetadata = []
-        $scope.jsonSelectedMetadata = [];
-        $scope.error = false;
-        $scope.loading = true;
+        function initData(){
+            $scope.datasource = "table";
+            $scope.data = [];
+            $scope.metadata = [];
+            $scope.jsonAvailableMetadata = [];
+            $scope.jsonSelectedMetadata = [];
+            $scope.error = false;
+            $scope.loading = false;
+            $scope.text = "";
+        }
+        initData();
 
         $scope.categories = ['Correlations', 'Distributions', 'Time Series', 'Hierarchies', 'Others'];
 
@@ -117,15 +121,17 @@ angular.module('raw.controllers', [])
             $scope.jsonSelectedMetadata.forEach(function(val){selectedProperties.push(val.key)});
             var result = dataService.getItemsWithSelectedProperties(dataService.getStorageObject(),
                 selectedProperties);
-            $scope.JSON_WORKFLOW_STAGES.DATA_FETCHED = true;
+            $scope.JSON_WORKFLOW_STAGES.DATA_PREPARED = true;
             $scope.metadata = $scope.jsonSelectedMetadata;
-            //$scope.text = JSON.stringify(result); // preview in code table
             console.log('fetched json', result);
             $scope.data = result;
+
+            // switch view to preview data set
+            $scope.dataView = 'table';
         };
 
         $scope.$watch('text', function (text) {
-            if($scope.JSON_WORKFLOW_STAGES.DATA_FETCHED){
+            if($scope.JSON_WORKFLOW_STAGES.DATA_PREPARED){
                 return;
             }
 
@@ -138,6 +144,10 @@ angular.module('raw.controllers', [])
                 $scope.delayParse(text);
             }
         });
+
+        $scope.resetData = function () {
+            initData();
+        };
 
         $scope.charts = raw.charts.values().sort(function (a, b) {
             return a.title() < b.title() ? -1 : a.title() > b.title() ? 1 : 0;
