@@ -5,6 +5,8 @@
 angular.module('raw.services', [])
 
     .factory('dataService', function ($http, $q, $timeout) {
+        var storageObject = {};
+
         // there are basic type check available
         // raw just improves date check to only accept certain input
         function typeOfAngularStyle(value) {
@@ -143,7 +145,7 @@ angular.module('raw.services', [])
                         resultStorage.TopLevel.push({});
                     }
                     // add simple props and objects, but no arrays
-                    var itemPropertyNames = Object.getOwnPropertyNames(item); // indirect call needed
+                    var itemPropertyNames = Object.getOwnPropertyNames(item); // indirect call for array items needed
 
                     itemPropertyNames.forEach(function (name) {
                         if (angular.isArray(item[name])) {
@@ -166,6 +168,7 @@ angular.module('raw.services', [])
                         }
                     });
                 });
+                storageObject = resultStorage;
                 return resultStorage;
             },
 
@@ -186,7 +189,8 @@ angular.module('raw.services', [])
                 // check for nested properties / arrays
                 // e.g. "articles.pricePerPiece", "articles.category"
                 var nestedPropList = selectedProperties.filter(function (propertyName) {
-                    return propertyName.contains(".")
+                    // indirect call for array items needed
+                    return String.prototype.contains.call(propertyName, ".")
                 });
 
                 // extract number of arrays
@@ -229,10 +233,12 @@ angular.module('raw.services', [])
                         // e.g. "articles.pricePerPiece", "articles.category"
                         selectedProperties.forEach(function (propName) {
                             if (propName.startsWith(singleArrayName + ".")) {
+                                // add property of this array item
                                 newEntry[propName] = innerItem[propName.split('.')[1]];
-                            } else if (!propName.contains('.')) {
+
+                            } else if (!String.prototype.contains.call(propName, ".")) {
+                                // indirect call of "contains" for array items needed
                                 // parent data: e.g. "zipCode": "80331", "city": "München"
-                                innerItem.refIndex;
 
                                 // TODO performance killer ? due to look up for each property
                                 var parent = inputORMData[innerItem.refName][innerItem.refIndex];
@@ -244,8 +250,10 @@ angular.module('raw.services', [])
                         result.push(newEntry);
                     });
                 }
-
                 return result;
+            },
+            getStorageObject: function () {
+                return storageObject;
             }
         }
     });

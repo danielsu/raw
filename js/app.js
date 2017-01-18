@@ -10,7 +10,8 @@ angular.module('raw', [
   'raw.controllers',
   'mgcrea.ngStrap',
   'ui',
-  'colorpicker.module'
+  'colorpicker.module',
+  'isteven-multi-select'
 ])
 
 .config(['$routeProvider','$locationProvider', function ($routeProvider,$locationProvider) {

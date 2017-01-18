@@ -1084,3 +1084,21 @@ pre.CodeMirror-placeholder {
    background-repeat: no-repeat;
    opacity: .3;
 }
+
+span.multiSelect > button {
+  border-radius: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.jsonUrlHandling input[type="text"]{
+  height: 38px;
+}
+.jsonUrlHandling button{
+  line-height: 2em;
+  height: 38px;
+}
+
+.jsonUrlHandling button[disabled]{
+  color: lightgrey;
+}

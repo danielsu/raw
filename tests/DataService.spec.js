@@ -222,7 +222,7 @@ describe('data service', function () {
                 }
             });
 
-            expect(resultString).not.toContain('"refIndex": 42');
+            expect(resultString).not.toContain('"refIndex":42');
             expect(resultString).not.toContain('"refName": "unknownProb"');
         });
     });
