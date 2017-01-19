@@ -1,7 +1,36 @@
 <p align="center"><img src="http://raw.densitydesign.org/wp-content/uploads/2014/04/header.png"></p>
 
 
-##About
+##About this extension fork
+This fork is about to extend *RAW* to get data from external data sources, handles JSON files and deal with nested, hierarchical data structure. 
+The forked version is 1.0.0, the latest available version in December 2016. However, in the last weeks, there were a lot of changes published to the original project, containing commits from the last couple of years.
+
+**Load data from external sources**
+Not only copy and paste or given CSV-files, to deal with Cross-Origin-Resource-Sharing a proxy server is given in the project files.
+See [example wintershopping](data/json/wintershopping.json) file.
+
+**JSON format**
+Handle JSON data format and metadata will be extracted, too.
+Handle hierarchical (nested) data structure in JSON as it may come from webservice oder NOSQL-database.
+Therefore a transformation is needed to convert nested data structure to 2 dimensional table-like representation, so RAW can continue with it like before.
+Internally, the nested data will be transformed to an *object relational mapping* like representation and based on the selected metadata fields, the final data transformation will be done.
+A user interface workflow guides the user through the steps.
+
+See images below
+Sample of nested, hierarchical data structure
+![raw_extension_1_json_hierarchy](docs/raw_extension_1_json_hierarchy.png)
+
+Extended User Interfaces including a workflow as guideline
+![raw_extension_2_ui_and_workflowindicator](docs/raw_extension_2_ui_and_workflowindicator.png)
+
+Selection of the nested metadata
+![raw_extension_3_metadata_selection](docs/raw_extension_3_metadata_selection.png)
+
+The resulting transformed data, based on the selected metadata.
+![raw_extension_4_transformed_to_datatable](docs/raw_extension_4_transformed_to_datatable.png)
+
+
+##About RAW
 
 **RAW** is an open web tool developed at the [DensityDesign Research Lab](http://www.densitydesign.org) (Politecnico di Milano) to create custom vector-based visualizations on top of the amazing [d3.js](https://github.com/mbostock/d3) library by [Mike Bostock](http://bost.ocks.org/mike/).
 Primarily conceived as a tool for designers and vis geeks, RAW aims at providing a missing link  between spreadsheet applications (e.g. Microsoft Excel, Apple Numbers, Google Docs, OpenRefine, …) and vector graphics editors (e.g. Adobe Illustrator, Inkscape, …).
