@@ -3,20 +3,23 @@
 
 ##About this extension fork
 This fork is about to extend *RAW* to get data from external data sources, handles JSON files and deal with nested, hierarchical data structure. 
-The forked version is 1.0.0, the latest available version in December 2016. However, in the last weeks, there were a lot of changes published to the original project, containing commits from the last couple of years.
+Therefore a new workflow is integrated in the user interface to guide the user. Based on selected attributes, nested data will be transformed to an table-like representation, so RAW can use it for visualisation.
+
+The forked version is 1.0.0, the latest available version in December 2016. However, in the last days, there were a lot of changes published to the original project, containing commits from the last couple of years  (which were unpublished till now !?). Feature comparison is still to come.
 
 **Load data from external sources**
-Not only copy and paste or given CSV-files, to deal with Cross-Origin-Resource-Sharing a proxy server is given in the project files.
-See [example wintershopping](data/json/wintershopping.json) file.
+Not only copy and paste or given CSV-files, to deal with Cross-Origin-Resource-Sharing a proxy server is given in the project files. See example down below.
 
 **JSON format**
 Handle JSON data format and metadata will be extracted, too.
 Handle hierarchical (nested) data structure in JSON as it may come from webservice oder NOSQL-database.
 Therefore a transformation is needed to convert nested data structure to 2 dimensional table-like representation, so RAW can continue with it like before.
-Internally, the nested data will be transformed to an *object relational mapping* like representation and based on the selected metadata fields, the final data transformation will be done.
+Internally, the nested data will be transformed to an *relational database* like representation and based on the selected metadata fields, the final data transformation will be done.
 A user interface workflow guides the user through the steps.
 
-See images below
+**Overview of this extension** 
+Take a look at the [Video Demo on YouTube](https://www.youtube.com/watch?v=bgkKO4IwE54) or images below
+
 Sample of nested, hierarchical data structure
 ![raw_extension_1_json_hierarchy](docs/raw_extension_1_json_hierarchy.png)
 
