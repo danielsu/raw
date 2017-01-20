@@ -11,7 +11,8 @@ angular.module('raw', [
   'mgcrea.ngStrap',
   'ui',
   'colorpicker.module',
-  'isteven-multi-select'
+  'isteven-multi-select',
+  'ds-angular-nested-json-to-table'
 ])
 
 .config(['$routeProvider','$locationProvider', function ($routeProvider,$locationProvider) {

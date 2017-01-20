@@ -4,7 +4,7 @@
 
 angular.module('raw.controllers', [])
 
-    .controller('RawCtrl', function ($scope, dataService) {
+    .controller('RawCtrl', function ($scope, dataService,nestedJsonToTableService) {
 
         $scope.samples = [
             {title: 'Cars (multivariate)', url: 'data/multivariate.csv'},
@@ -88,7 +88,7 @@ angular.module('raw.controllers', [])
         function extractMetadataFromJson(obj) {
             const parsed = angular.isString(obj) ? JSON.parse(obj) : obj;
             //$scope.data = parsed;
-            $scope.jsonAvailableMetadata = dataService.getMetaDataFromJson(parsed);
+            $scope.jsonAvailableMetadata = nestedJsonToTableService.getMetaDataFromJson(parsed);
             console.log('$scope.metadata', $scope.jsonAvailableMetadata);
             $scope.loading = false;
         }
@@ -103,7 +103,7 @@ angular.module('raw.controllers', [])
                     $scope.JSON_WORKFLOW_STAGES.METADATA_EXTRACTED = true;
 
                     // 3d to ORM
-                    dataService.transformNestedDataToORM(data);
+                    nestedJsonToTableService.transformNestedDataToORM(data);
                     $scope.JSON_WORKFLOW_STAGES.CONVERTED_3D_TO_2D = true;
                 },
                 function (error) {
@@ -122,8 +122,7 @@ angular.module('raw.controllers', [])
             // combine data sets for selected fields
             var selectedProperties = [];
             $scope.jsonSelectedMetadata.forEach(function(val){selectedProperties.push(val.key)});
-            var result = dataService.getItemsWithSelectedProperties(dataService.getStorageObject(),
-                selectedProperties);
+            var result = nestedJsonToTableService.getItemsWithSelectedProperties(selectedProperties);
             $scope.JSON_WORKFLOW_STAGES.DATA_PREPARED = true;
             $scope.metadata = $scope.jsonSelectedMetadata;
             console.log('fetched json', result);

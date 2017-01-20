@@ -36,6 +36,7 @@
     "canvas-toBlob.js": "https://github.com/eligrey/canvas-toBlob.js.git",
     "jqueryui-touch-punch": "*",
     "codemirror": "~4.5.0",
-    "isteven-angular-multiselect": "^4.0.0"
+    "isteven-angular-multiselect": "^4.0.0",
+    "ds-angular-nested-json-to-table": "0.1.0"
   }
 }
