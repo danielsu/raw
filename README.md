@@ -16,6 +16,7 @@ Handle hierarchical (nested) data structure in JSON as it may come from webservi
 Therefore a transformation is needed to convert nested data structure to 2 dimensional table-like representation, so RAW can continue with it like before.
 Internally, the nested data will be transformed to an *relational database* like representation and based on the selected metadata fields, the final data transformation will be done.
 A user interface workflow guides the user through the steps.
+This logic is extracted as angular service to a separate repo [ds-angular-nested-json-to-table](https://github.com/danielsu/ds-angular-nested-json-to-table), available as NPM or Bower dependency.
 
 **Overview of this extension** 
 Take a look at the [Video Demo on YouTube](https://www.youtube.com/watch?v=bgkKO4IwE54) or images below
